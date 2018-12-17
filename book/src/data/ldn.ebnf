@@ -1,0 +1,39 @@
+(*
+ * Whitespace
+ *)
+
+eol = ? U+000A ? ;
+
+whitespace = " " | eol ;
+
+(*
+ * Rules
+ *)
+
+(* Item *)
+items = { item };
+
+item = atom | list | comment ;
+
+(* Comment *)
+any = ? any byte ? ;
+
+comment = ";" , { any }, eol ;
+
+(* List *)
+list = "(" , { item } , ")" ;
+
+(* Atoms *)
+atom = integer | string | keyword | symbol;
+
+integer = "0" | [ "-" ] , digit_1_9 , { digit } ;
+digit = "0" | digit_1_9 ;
+digit_1_9 = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+string = """ , { any | string_escape_seq } , """ ;
+string_escape_seq = "\"" ;
+
+keyword = ":" , symbol ;
+
+symbol = "+" | "-" | "*" | "/" | "%" | "=" | "<" | ">" | "?" | "!" | alpha ;
+alpha = ? "a" ... "z" ? | ? "A" ... "Z" ? ;

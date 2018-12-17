@@ -1,0 +1,5 @@
+[book]
+authors = ["Lorenzo Villani"]
+multilingual = false
+src = "src"
+title = "Lithium Book"
