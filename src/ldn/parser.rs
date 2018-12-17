@@ -113,7 +113,10 @@ where
     fn parse_comment(&mut self) -> Result<Item> {
         let (comment, span) = self.tokenizer.take_until(|&ch| ch != b'\n')?;
 
-        Ok(Item::Comment(comment, span))
+        Ok(Item::Comment(
+            comment.trim_start_matches(';').trim().to_string(),
+            span,
+        ))
     }
 
     /// Parses an integer. Called by the main loop at the first digit or negative sign position.
@@ -260,10 +263,14 @@ mod tests {
     fn parse_comment() {
         assert_eq!(
             vec![
-                Item::Comment("; foo bar".into(), span(0, 2, 0, 11)),
-                Item::Comment("; baz".into(), span(1, 0, 1, 5))
+                Item::Comment("foo bar".into(), span(0, 2, 0, 11)),
+                Item::Comment("baz".into(), span(1, 0, 1, 5)),
+                Item::Comment("qux".into(), span(2, 0, 2, 6)),
+                Item::Comment("; quux ;".into(), span(3, 0, 3, 11))
             ],
-            Parser::from("  ; foo bar\n; baz").parse().unwrap()
+            Parser::from("  ; foo bar\n; baz\n;; qux\n;; ; quux ;")
+                .parse()
+                .unwrap()
         )
     }
 
