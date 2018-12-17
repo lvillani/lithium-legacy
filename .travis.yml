@@ -3,6 +3,6 @@ rust: stable
 cache: cargo
 script:
   - rustup component add clippy
-  - cargo build --verbose
-  - cargo clippy --verbose
-  - cargo test --verbose
+  - cargo build
+  - cargo clippy
+  - cargo test
