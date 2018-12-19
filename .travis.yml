@@ -3,6 +3,4 @@ rust: stable
 cache: cargo
 script:
   - rustup component add clippy
-  - cargo build
-  - cargo clippy
-  - cargo test
+  - ./script/cibuild
