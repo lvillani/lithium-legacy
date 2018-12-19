@@ -26,6 +26,17 @@ pub enum Item {
     List(List, Span),
 }
 
+impl Item {
+    /// Returns the `Span` associated with the item.
+    pub fn span(&self) -> &Span {
+        match self {
+            Item::Atom(atom) => atom.span(),
+            Item::Comment(_, span) => span,
+            Item::List(_, span) => span,
+        }
+    }
+}
+
 /// An indivisible syntactic element. In other words, anything that is not a comment or a list.
 #[derive(Debug, PartialEq)]
 pub enum Atom {
@@ -33,4 +44,16 @@ pub enum Atom {
     Keyword(String, Span),
     String(String, Span),
     Symbol(String, Span),
+}
+
+impl Atom {
+    /// Returns the `Span` associated with the atom.
+    pub fn span(&self) -> &Span {
+        match self {
+            Atom::Integer(_, span) => span,
+            Atom::Keyword(_, span) => span,
+            Atom::String(_, span) => span,
+            Atom::Symbol(_, span) => span,
+        }
+    }
 }

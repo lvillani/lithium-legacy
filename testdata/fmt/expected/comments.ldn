@@ -1,0 +1,11 @@
+; Consecutive leading semicolons should be collapsed into one...
+; ... but trailing semicolons will still be there ;
+
+; Empty lines between top level comments are preserved
+
+; But when there's more than one, we collapse them.
+
+; Indented top-level comments go back to column 0
+
+(foo) ; You can place inline comments ...
+123 ; ... but heavily indented ones are moved back where they belong.
