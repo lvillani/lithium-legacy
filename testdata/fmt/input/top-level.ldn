@@ -1,0 +1,23 @@
+; Top-level elements must have exactly one empty line between them, unless they are comments.
+; So, this line and the one above will remain adjacent after formatting.
+
+; This comment must remain attached to the subsequent item.
+123
+
+; Multiple subsequent items must have an empty line between them.
+
+123 456 "foo bar"
+
+; We also throw in an unformatted list for good measure.
+(define (fib n)
+(cond
+((= n 0) 0)
+((= n 1) 1)
+(else
+(+ (fib (- n 1))
+(fib (- n 2))))))
+
+
+
+
+    (fib 10)

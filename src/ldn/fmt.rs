@@ -38,7 +38,12 @@ fn fmt_items(items: &[Item], is_top_level: bool, lhs: usize) -> String {
 
     for item in items {
         if let Some(prev) = prev {
-            let delta = item.span().start.line - prev.span().start.line;
+            let delta = if is_top_level && !item.is_comment() && !prev.is_comment() {
+                // Always insert an empty line between consecutive non-comment items at top-level.
+                2
+            } else {
+                item.span().start.line - prev.span().start.line
+            };
 
             if delta == 0 {
                 ret += " ";

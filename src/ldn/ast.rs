@@ -35,6 +35,14 @@ impl Item {
             Item::List(_, span) => span,
         }
     }
+
+    /// Returns `true` if the current item is a comment.
+    pub fn is_comment(&self) -> bool {
+        match self {
+            Item::Comment(_, _) => true,
+            _ => false,
+        }
+    }
 }
 
 /// An indivisible syntactic element. In other words, anything that is not a comment or a list.
