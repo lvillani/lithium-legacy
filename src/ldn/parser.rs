@@ -64,9 +64,9 @@ where
                 b';' => {
                     ret.push(self.parse_comment()?);
                 }
-                // Integers
+                // Integers (or symbols if the token is '-' alone).
                 ch if ch == b'0' || ch == b'-' || Self::is_digit_1_9(ch) => {
-                    ret.push(self.parse_integer()?);
+                    ret.push(self.parse_integer_or_symbol()?);
                 }
                 // Strings
                 b'"' => {
@@ -120,11 +120,14 @@ where
     }
 
     /// Parses an integer. Called by the main loop at the first digit or negative sign position.
-    fn parse_integer(&mut self) -> Result<Item> {
+    fn parse_integer_or_symbol(&mut self) -> Result<Item> {
         let (token, span) = self.next_token()?;
 
         if (token.starts_with('0') && token != "0") || token.starts_with("-0") {
             return Err(Error::IntegerLeadingZero(token, span));
+        } else if token == "-" {
+            // "-" is a valid symbol when found by itself.
+            return Ok(Item::Atom(Atom::Symbol(token, span)));
         }
 
         match token.parse::<isize>() {
@@ -294,8 +297,8 @@ mod tests {
         );
 
         assert_eq!(
-            Err(Error::IntegerParseError("-".into(), span(0, 0, 0, 1))),
-            Parser::from("-").parse()
+            Err(Error::IntegerLeadingZero("-0".into(), span(0, 0, 0, 2))),
+            Parser::from("-0").parse()
         );
     }
 
@@ -334,6 +337,12 @@ mod tests {
                 span(0, 0, 0, 11)
             ))],
             Parser::from("string->int").parse().unwrap()
+        );
+
+        // "-" by itself is a symbol.
+        assert_eq!(
+            vec![Item::Atom(Atom::Symbol("-".into(), span(0, 0, 0, 1)))],
+            Parser::from("-").parse().unwrap()
         );
     }
 
