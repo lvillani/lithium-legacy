@@ -7,5 +7,9 @@
 
 ; Indented top-level comments go back to column 0
 
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;
+; It is totally fine to have boxed comments like this ;
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;
+
 (foo) ; You can place inline comments ...
 123 ; ... but heavily indented ones are moved back where they belong.
