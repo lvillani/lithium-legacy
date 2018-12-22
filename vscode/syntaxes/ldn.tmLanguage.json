@@ -1,0 +1,63 @@
+{
+  "scopeName": "source.ldn",
+  "patterns": [{ "include": "#item" }],
+  "repository": {
+    "item": {
+      "patterns": [
+        { "include": "#atom" },
+        { "include": "#comment" },
+        { "include": "#list" }
+      ]
+    },
+    "atom": {
+      "patterns": [
+        { "include": "#atom-integer" },
+        { "include": "#atom-keyword" },
+        { "include": "#atom-string" },
+        { "include": "#atom-symbol-control" },
+        { "include": "#atom-symbol" }
+      ]
+    },
+    "atom-integer": {
+      "match": "-?\\d+",
+      "name": "constant.numeric"
+    },
+    "atom-keyword": {
+      "match": ":([a-zA-Z+\\-*/%=<>!])+",
+      "name": "keyword.other"
+    },
+    "atom-string": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double",
+      "patterns": [
+        { "name": "constant.character.escape.untitled", "match": "\\\\." }
+      ]
+    },
+    "atom-symbol-control": {
+      "match": "cond|define|define-macro|else|else-if|for|if|lambda|match|while",
+      "name": "keyword.control"
+    },
+    "atom-symbol": {
+      "match": "([a-zA-Z+\\-*/%=<>!])+",
+      "name": "variable.other"
+    },
+    "comment": {
+      "begin": ";",
+      "end": "\n",
+      "name": "comment.line"
+    },
+    "list": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": { "name": "punctuation.paren.open" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.paren.close" }
+      },
+      "name": "expression.group",
+      "patterns": [{ "include": "#item" }]
+    }
+  }
+}
