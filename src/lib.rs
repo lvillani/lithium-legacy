@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// FIXME(lvillani): Intentionally using Rust 2015 module layout (i.e. ldn/mod.rs) since Rust 2018
+// FIXME(lvillani): Intentionally using Rust 2015 module layout (e.g. ldn/mod.rs) since Rust 2018
 // module layout seems to confuse RLS, which ends up being unable to provide completions.
 
 pub mod ldn;
