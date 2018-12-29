@@ -12,19 +12,19 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "grammars": [
-      {
-        "language": "ldn",
-        "scopeName": "source.ldn",
-        "path": "./syntaxes/ldn.tmLanguage.json"
-      }
-    ],
     "languages": [
       {
         "id": "ldn",
         "extensions": [
           ".ldn"
         ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ldn",
+        "scopeName": "source.ldn",
+        "path": "./syntaxes/ldn.tmLanguage.json"
       }
     ]
   },
