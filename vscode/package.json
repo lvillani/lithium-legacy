@@ -22,14 +22,8 @@
     "languages": [
       {
         "id": "ldn",
-        "aliases": [
-          "Lithium Data Notation"
-        ],
         "extensions": [
-          ".ldn",
-          ".li",
-          ".lss",
-          ".lml"
+          ".ldn"
         ]
       }
     ]
