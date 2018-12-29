@@ -15,6 +15,7 @@
     "languages": [
       {
         "id": "ldn",
+        "configuration": "./language-configuration.json",
         "extensions": [
           ".ldn"
         ]
