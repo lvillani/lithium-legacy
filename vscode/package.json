@@ -12,11 +12,6 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "configurationDefaults": {
-      "[ldn]": {
-        "editor.formatOnSave": true
-      }
-    },
     "grammars": [
       {
         "language": "ldn",
