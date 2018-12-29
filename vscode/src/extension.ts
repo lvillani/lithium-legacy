@@ -13,8 +13,49 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import * as vscode from "vscode";
+import * as fs from "fs";
+import * as process from "process";
+import * as path from "path";
 
-export function activate(_: vscode.ExtensionContext) {}
+import * as vscode from "vscode";
+import {
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind
+} from "vscode-languageclient";
+
+export function activate(context: vscode.ExtensionContext) {
+  let devServerPath = path.join(
+    process.cwd(),
+    "target",
+    "debug",
+    "ldn-languageserver"
+  );
+
+  let languageServerCommand;
+  if (fs.existsSync(devServerPath)) {
+    languageServerCommand = devServerPath;
+  } else {
+    languageServerCommand = "ldn-languageserver"; // Assume it's in $PATH
+  }
+
+  let languageServerOptions: ServerOptions = {
+    command: languageServerCommand,
+    transport: TransportKind.stdio
+  };
+
+  let languageClientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: "file", language: "ldn" }]
+  };
+
+  let client = new LanguageClient(
+    "ldn",
+    languageServerOptions,
+    languageClientOptions
+  );
+
+  context.subscriptions.push(client.start());
+}
 
 export function deactivate() {}
