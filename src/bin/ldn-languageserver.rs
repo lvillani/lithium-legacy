@@ -13,4 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-fn main() {}
+use std::io;
+
+use lithium::languageserver;
+
+fn main() -> io::Result<()> {
+    languageserver::run()
+}

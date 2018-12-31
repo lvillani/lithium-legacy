@@ -13,8 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// FIXME(lvillani): Intentionally using Rust 2015 module layout (e.g. ldn/mod.rs) since Rust 2018
-// module layout seems to confuse RLS, which ends up being unable to provide completions.
+//! Implements a language server speaking version 3.6 of the Language Server Protocol.
+//!
+//! The server is very simple, synchronous, and communicates with editors over stdin and stdout.
 
-pub mod languageserver;
-pub mod ldn;
+pub mod handler;
+pub mod server;
+pub mod stdio_transport;
+
+pub use self::server::run;
