@@ -94,7 +94,7 @@ where
                 }
                 // Catch-all error
                 ch => {
-                    return Err(Error::UnknownCharacter(ch, self.tokenizer.pos().clone()));
+                    return Err(Error::InvalidCharacter(ch, self.tokenizer.pos().clone()));
                 }
             }
         }
@@ -111,7 +111,9 @@ where
 
     /// Parses a comment. Called by the main loop at the semicolon's position.
     fn parse_comment(&mut self) -> Result<Item> {
-        let (comment, span) = self.tokenizer.take_until(|&ch| ch != b'\n')?;
+        let (comment, span) = self
+            .tokenizer
+            .take_until(Self::is_printable, |ch| ch != b'\n')?;
 
         Ok(Item::Comment(
             comment.trim_start_matches(';').trim().to_string(),
@@ -149,7 +151,9 @@ where
         let mut string_last_span: Span;
 
         loop {
-            let (chunk, span) = self.tokenizer.take_until(|&ch| ch != b'"')?;
+            let (chunk, span) = self
+                .tokenizer
+                .take_until(Self::is_printable, |ch| ch != b'"')?;
 
             // Skip quotation marks.
             self.tokenizer.next_ch();
@@ -205,12 +209,17 @@ where
     /// Returns the next token and span, by consuming bytes until the first whitespace character or
     /// closing paren.
     fn next_token(&mut self) -> Result<(String, Span)> {
-        Ok(self
-            .tokenizer
-            .take_until(|&ch| !Self::is_whitespace(ch) && ch != b')')?)
+        Ok(self.tokenizer.take_until(Self::is_printable, |ch| {
+            !Self::is_whitespace(ch) && ch != b')'
+        })?)
     }
 
     // Recognizers
+
+    /// Returns `true` if `ch` is a printable character.
+    fn is_printable(ch: u8) -> bool {
+        ch >= 0x20 && ch <= 0x7e
+    }
 
     /// Returns `true` if `ch` is considered a whitespace character according to the grammar.
     fn is_whitespace(ch: u8) -> bool {
@@ -257,7 +266,7 @@ mod tests {
     #[test]
     fn parse_unknown() {
         assert_eq!(
-            Err(Error::UnknownCharacter(b'\r', pos(0, 1))),
+            Err(Error::InvalidCharacter(b'\r', pos(0, 1))),
             Parser::from(" \r").parse()
         );
     }
@@ -313,11 +322,8 @@ mod tests {
         );
 
         assert_eq!(
-            vec![Item::Atom(Atom::String(
-                "foo\nbar".into(),
-                span(0, 0, 1, 3)
-            ))],
-            Parser::from("\"foo\nbar\"").parse().unwrap()
+            Err(Error::InvalidCharacter(b'\n', pos(0, 4))),
+            Parser::from("\"foo\nbar\"").parse()
         );
     }
 

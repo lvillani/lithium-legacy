@@ -48,21 +48,24 @@ where
         }
     }
 
-    /// Returns a token from bytes read from the underlying iterator until the predicate returns
-    /// false.
-    ///
-    /// This method internally uses `peek_ch()`.
-    pub fn take_until<F>(&mut self, predicate: F) -> Result<(String, Span)>
+    /// Returns a token from bytes read from the underlying iterator until the stop predicate
+    /// returns false. Raises an error when the check predicate returns false.
+    pub fn take_until<F1, F2>(&mut self, check_p: F1, stop_p: F2) -> Result<(String, Span)>
     where
-        F: Fn(&u8) -> bool,
+        F1: Fn(u8) -> bool,
+        F2: Fn(u8) -> bool,
     {
         let mut ret: Vec<u8> = Vec::new();
 
         let start = self.pos().clone();
 
         while let Some(ch) = self.peek_ch() {
-            if !predicate(ch) {
+            if !stop_p(*ch) {
                 break;
+            }
+
+            if !check_p(*ch) {
+                return Err(Error::InvalidCharacter(*ch, self.pos().clone()));
             }
 
             ret.push(*ch);
@@ -130,7 +133,7 @@ mod tests {
     #[test]
     fn take_until_empty() {
         let mut t = Tokenizer::from("");
-        let s = t.take_until(|_| true).unwrap();
+        let s = t.take_until(|_| true, |_| true).unwrap();
 
         assert_eq!(("".to_string(), Span::default()), s);
         assert_eq!(&Position::default(), t.pos());
@@ -139,7 +142,7 @@ mod tests {
     #[test]
     fn take_until_everything() {
         let mut t = Tokenizer::from("foo bar");
-        let s = t.take_until(|_| true).unwrap();
+        let s = t.take_until(|_| true, |_| true).unwrap();
 
         assert_eq!(("foo bar".to_string(), span(0, 0, 0, 7)), s);
         assert_eq!(&pos(0, 7), t.pos());
@@ -148,7 +151,7 @@ mod tests {
     #[test]
     fn take_until_nothing() {
         let mut t = Tokenizer::from("foo bar");
-        let s = t.take_until(|_| false).unwrap();
+        let s = t.take_until(|_| true, |_| false).unwrap();
 
         assert_eq!(("".to_string(), Span::default()), s);
         assert_eq!(&Position::default(), t.pos());
@@ -158,14 +161,14 @@ mod tests {
     fn take_until() {
         let mut t = Tokenizer::from("foo bar");
 
-        let s1 = t.take_until(|ch| *ch != b' ').unwrap();
+        let s1 = t.take_until(|_| true, |ch| ch != b' ').unwrap();
         assert_eq!(("foo".to_string(), span(0, 0, 0, 3)), s1);
         assert_eq!(&pos(0, 3), t.pos());
 
         assert_eq!(Some(b' '), t.next_ch());
         assert_eq!(&pos(0, 4), t.pos());
 
-        let s2 = t.take_until(|ch| *ch != b' ').unwrap();
+        let s2 = t.take_until(|_| true, |ch| ch != b' ').unwrap();
         assert_eq!(("bar".to_string(), span(0, 4, 0, 7)), s2);
         assert_eq!(&pos(0, 7), t.pos());
 

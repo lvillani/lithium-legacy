@@ -26,9 +26,9 @@ pub type Result<T> = result::Result<T, Error>;
 pub enum Error {
     IntegerLeadingZero(String, Span),
     IntegerParseError(String, Span),
+    InvalidCharacter(u8, Position),
     SymbolParseError(String, Span),
     UnbalancedParentheses(Position),
-    UnknownCharacter(u8, Position),
     Utf8Error(Span),
 }
 
@@ -43,13 +43,13 @@ impl fmt::Display for Error {
             Error::IntegerParseError(token, span) => {
                 write!(f, "{} cannot parse '{}' as integer", span, token)
             }
+            Error::InvalidCharacter(ch, pos) => write!(f, "{} invalid character '{}'", pos, ch),
             Error::SymbolParseError(token, span) => {
                 write!(f, "{} cannot parse '{}' as symbol", span, token)
             }
             Error::UnbalancedParentheses(pos) => {
                 write!(f, "{} unbalanced parentheses in list`", pos)
             }
-            Error::UnknownCharacter(ch, pos) => write!(f, "{} unknown character '{}'", pos, ch),
             Error::Utf8Error(s) => write!(f, "{} utf-8 decode error", s),
         }
     }

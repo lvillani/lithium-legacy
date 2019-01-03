@@ -1,39 +1,111 @@
 (*
- * Whitespace
- *)
+  Lithium Data Notation Syntax
 
-eol = ? U+000A ? ;
+  This is free and unencumbered software released into the public domain.
 
-whitespace = " " | eol ;
+  Anyone is free to copy, modify, publish, use, compile, sell, or
+  distribute this software, either in source code form or as a compiled
+  binary, for any purpose, commercial or non-commercial, and by any
+  means.
+
+  In jurisdictions that recognize copyright laws, the author or authors
+  of this software dedicate any and all copyright interest in the
+  software to the public domain. We make this dedication for the benefit
+  of the public at large and to the detriment of our heirs and
+  successors. We intend this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights to this
+  software under copyright law.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+
+  For more information, please refer to <http://unlicense.org>
+*)
 
 (*
- * Rules
+  This grammar is written in Extended Backus–Naur Form (EBNF) as
+  described in ISO/IEC 14977 (E).
+
+  See also:
+  - http://standards.iso.org/ittf/PubliclyAvailableStandards/s026153_ISO_IEC_14977_1996(E).zip
+  - https://en.wikipedia.org/wiki/Extended_Backus–Naur_form
  *)
 
-(* Item *)
-items = { item };
+(*
+  Character Set
+ *)
 
-item = atom | list | comment ;
+printable = ? Unicode U+0020 to U+007E ? ;
 
-(* Comment *)
-any = ? any byte ? ;
+newline = ? Unicode Character U+000A ? ;
 
-comment = ";" , { any }, eol ;
+space = ' ' ;
 
-(* List *)
-list = "(" , { item } , ")" ;
+letter
+    = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
+    | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p'
+    | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x'
+    | 'y' | 'z'
+    | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
+    | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P'
+    | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X'
+    | 'Y' | 'Z' ;
 
-(* Atoms *)
-atom = integer | string | keyword | symbol;
+digit
+    = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7'
+    | '8' | '9' ;
 
-integer = "0" | [ "-" ] , digit_1_9 , { digit } ;
-digit = "0" | digit_1_9 ;
-digit_1_9 = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+symbol_constituent
+    = '+' | '-' | '*' | '/' | '%' | '=' | '<' | '>'
+    | '?' | '!' | letter ;
 
-string = """ , { any | string_escape_seq } , """ ;
-string_escape_seq = "\"" ;
+(*
+  Tokenization
+ *)
 
-keyword = ":" , symbol ;
+delimiter = newline | space | ';' | ')' ;
 
-symbol = "+" | "-" | "*" | "/" | "%" | "=" | "<" | ">" | "?" | "!" | alpha ;
-alpha = ? "a" ... "z" ? | ? "A" ... "Z" ? ;
+whitespace = newline | space ;
+
+(*
+  Comments
+ *)
+
+comment = ';' , { printable } , newline ;
+
+(*
+  Top Level
+ *)
+
+top_level = { datum } ;
+
+(*
+  Datum
+ *)
+
+datum = atom | list ;
+
+(*
+  Atom
+ *)
+
+atom = integer | string | symbol | keyword ;
+
+integer = [ '-' ] , digit , { digit } ;
+
+string = '"' , { '\"' | ( printable - '"' ) } , '"' ;
+
+symbol = symbol_constituent , { symbol_constituent } ;
+
+keyword = ':' , symbol ;
+
+(*
+  List
+ *)
+
+list = '(' , { datum } , ')' ;

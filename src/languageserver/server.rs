@@ -193,6 +193,12 @@ impl Into<Diagnostic> for ldn::Error {
                 severity: Some(DiagnosticSeverity::Error),
                 ..Diagnostic::default()
             },
+            ldn::Error::InvalidCharacter(_, pos) => Diagnostic {
+                message: "Invalid character".into(),
+                range: pos.into(),
+                severity: Some(DiagnosticSeverity::Error),
+                ..Diagnostic::default()
+            },
             ldn::Error::SymbolParseError(_, span) => Diagnostic {
                 message: "Symbol parse error".into(),
                 range: span.into(),
@@ -201,12 +207,6 @@ impl Into<Diagnostic> for ldn::Error {
             },
             ldn::Error::UnbalancedParentheses(pos) => Diagnostic {
                 message: "Unbalanced parentheses".into(),
-                range: pos.into(),
-                severity: Some(DiagnosticSeverity::Error),
-                ..Diagnostic::default()
-            },
-            ldn::Error::UnknownCharacter(_, pos) => Diagnostic {
-                message: "Unknown character".into(),
                 range: pos.into(),
                 severity: Some(DiagnosticSeverity::Error),
                 ..Diagnostic::default()
