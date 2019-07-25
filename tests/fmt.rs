@@ -16,7 +16,7 @@
 use std::fs;
 use std::path;
 
-use colored_diff;
+use pretty_assertions::assert_eq;
 
 use lithium::ldn::{fmt, Parser};
 
@@ -42,11 +42,6 @@ fn fmt_by_example() {
         ))
         .unwrap();
 
-        assert_eq!(
-            expected,
-            actual,
-            "{}",
-            colored_diff::PrettyDifference { expected, actual }
-        );
+        assert_eq!(expected, actual);
     }
 }
